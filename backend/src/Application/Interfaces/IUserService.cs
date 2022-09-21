@@ -4,9 +4,10 @@ namespace Application.Interfaces
 {
   public interface IUserService
   {
-    void RegisterAndSignIn(UserRegisterDtoIn userRegisterAndSignIn);
+    Task RegisterAndSignIn(UserRegisterDtoIn userRegisterAndSignIn);
+    Task<UserDtoOut> GetById(string id);
+    Task<UserDtoOut> GetByEmail(string email);
     //Task<List<UserDtoOut>> GetAll();
-    //Task<UserDtoOut> GetById(Guid id);
     //Task<UserDtoOut> Create(UserDtoIn model);
     //Task<UserDtoOut> Update(UserDtoIn model, Guid id);
     //Task Delete(Guid id);

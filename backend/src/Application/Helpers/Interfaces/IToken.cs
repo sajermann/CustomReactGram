@@ -5,7 +5,7 @@ namespace Application.Helpers.Interfaces
 {
   public interface IToken
   {
-    Task<UserDtoOut> GenerateToken(UserDtoOut userAuth);
+    Task<UserRegisterDtoOut> GenerateToken(UserRegisterDtoOut userAuth);
 
     JwtSecurityToken ReadToken(string token);
 

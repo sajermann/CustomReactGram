@@ -4,7 +4,7 @@
   {
     public static string Encripty(string pass)
     {
-      int workfactor = 8;
+      int workfactor = 4;
       string salt = BCrypt.Net.BCrypt.GenerateSalt(workfactor);
       string hash = BCrypt.Net.BCrypt.HashPassword(pass, salt);
 

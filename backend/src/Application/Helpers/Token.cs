@@ -16,7 +16,7 @@ namespace Application.Helpers
       _configuration = configuration;
     }
 
-    public async Task<UserDtoOut> GenerateToken(UserDtoOut user)
+    public async Task<UserRegisterDtoOut> GenerateToken(UserRegisterDtoOut user)
     {
       var tokenHandler = new JwtSecurityTokenHandler();
       var st = _configuration.GetSection("Security").Value;

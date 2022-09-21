@@ -1,24 +1,59 @@
 ﻿using Application.Dtos;
+using Application.Helpers;
 using Application.Helpers.Interfaces;
 using Application.Interfaces;
+using Data;
+using Domain;
 
 namespace Application
 {
   public class UserService : IUserService
   {
-    //private readonly IGenericRepository<User> _genericRepository;
-    //private readonly IMapper _mapper;
+    private readonly IUserRepository _userRepository;
     private readonly IToken _token;
 
 
-    public UserService(IToken token)
+    public UserService(IToken token, IUserRepository userRepository)
     {
       _token = token;
+      _userRepository = userRepository;
     }
 
-    public void RegisterAndSignIn(UserRegisterDtoIn userRegisterAndSignIn)
+    public async Task RegisterAndSignIn(UserRegisterDtoIn userRegisterAndSignIn)
     {
-      var t = userRegisterAndSignIn;
+      var userExists = await _userRepository.GetByEmail(userRegisterAndSignIn.Email);
+      if (userExists != null)
+      {
+        var errorsNew = new Dictionary<string, string[]>();
+        List<string> errorsEmails = new List<string>();
+        errorsEmails.Add("Address already used!");
+        errorsNew.Add("Email", errorsEmails.ToArray());
+        throw new ModelValidationException(400, errorsNew);
+      }
+      var user = new User();
+      user.Name = userRegisterAndSignIn.Name;
+      user.Email = userRegisterAndSignIn.Email;
+      user.Password = Password.Encripty(userRegisterAndSignIn.Password);
+      await _userRepository.Create(user);
+
+      var userInserted = await _userRepository.GetByEmail(userRegisterAndSignIn.Email);
+      var userTemp = new UserRegisterDtoOut();
+      userTemp.Name = userInserted.Name; 
+      userTemp.Email = userInserted.Email; 
+      userTemp.Id = userInserted.Id; 
+      var result = await _token.GenerateToken(userTemp);
+    }
+
+    public async Task<UserDtoOut> GetById(string id)
+    {
+      var user = await _userRepository.GetById(id);
+      return user.ToUserDtoOut();
+    }
+
+    public async Task<UserDtoOut> GetByEmail(string email)
+    {
+      var user = await _userRepository.GetByEmail(email);
+      return user.ToUserDtoOut();
     }
 
     //public async Task<List<UserDtoOut>> GetAll()

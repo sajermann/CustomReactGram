@@ -5,6 +5,7 @@
 
 # Block By Sajermann
 NoUpGit/
+/backend/src/WebMinimalApi/appsettings.Development.json
 
 # User-specific files
 *.rsuser

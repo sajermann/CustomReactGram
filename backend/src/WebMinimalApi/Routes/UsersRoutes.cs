@@ -28,17 +28,17 @@ namespace Api.Routes
       //  }
       //}).WithDisplayName("Usuários").WithTags("Users");
 
-      app.MapPost($"{BaseURL}/register", (IUserService userService, UserRegisterDtoIn userRegister) =>
+      app.MapPost($"{BaseURL}/register", async (IUserService userService, UserRegisterDtoIn userRegister) =>
       {
         try
         {
           userRegister.IsValid();
-          //var users = userService.GetAll();
+          await userService.RegisterAndSignIn(userRegister);
           return Results.Ok("Bala");
         }
         catch (ModelValidationException ex)
         {
-          return Results.ValidationProblem(ex.Errors, null, null, ex.StatusCode); //.Problem(null, null, ex.StatusCode, null, null, ex.Errors);
+          return Results.ValidationProblem(ex.Errors, null, null, ex.StatusCode);
         }
       }).WithDisplayName("Usuários").WithTags("Users");
 

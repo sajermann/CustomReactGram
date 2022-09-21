@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
   {
     public static IServiceCollection AddAllDi(this IServiceCollection services, IConfiguration configuration)
     {
-      //services.AddRepositories(configuration);
+      services.AddRepositories(configuration);
       services.AddServices();
 
       return services;
