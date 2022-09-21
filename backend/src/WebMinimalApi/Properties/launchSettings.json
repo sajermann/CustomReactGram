@@ -1,31 +1,18 @@
-﻿{
-  "$schema": "https://json.schemastore.org/launchsettings.json",
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:9199",
-      "sslPort": 44312
-    }
-  },
+{
   "profiles": {
     "WebMinimalApi": {
       "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
       "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7038;http://localhost:5038",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      "applicationUrl": "https://localhost:5000;http://localhost:5001"
     }
-  }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "user": "reactgram",
+  "pass": "e2U7I5JYQBDb",
+  "connext": "mongodb+srv://<username>:<password>@cluster0.k6x9m.gcp.mongodb.net/?retryWrites=true&w=majority"
 }
