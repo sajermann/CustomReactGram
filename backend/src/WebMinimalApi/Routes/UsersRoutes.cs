@@ -62,9 +62,14 @@ namespace Api.Routes
         var tokenJwt = request.JwtExtractor();
         var result = await userService.GetProfile(tokenJwt);
         return Results.Ok(result);
-      })
-        //.RequireAuthorization()
-        .WithTags("Users").Produces(StatusCodes.Status401Unauthorized);
+      }).RequireAuthorization().WithTags("Users").Produces(StatusCodes.Status401Unauthorized);
+
+      app.MapPut($"{BaseURL}", async (IUserService userService, HttpRequest request, UserDtoIn userUpdate) =>
+      {
+        var tokenJwt = request.JwtExtractor();
+        var result = await userService.UpdateProfile(userUpdate, tokenJwt);
+        return Results.Ok(result);
+      }).RequireAuthorization().WithTags("Users").Produces(StatusCodes.Status401Unauthorized);
 
       //app.MapPost($"{BaseURL}", (IUserService userService, UserDtoIn user) =>
       //{
@@ -87,34 +92,33 @@ namespace Api.Routes
       //.Produces<IDictionary<string, object>>(StatusCodes.Status400BadRequest)
       //.Produces<UserDtoOut>(StatusCodes.Status201Created);
 
-      //app.MapPost($"{BaseURL}/avatar", async (ICustomException customException, IUserService userService, HttpRequest request) =>
-      //{
-      //  try
-      //  {
-      //  if (!request.HasFormContentType)
-      //  {
-      //    return Results.BadRequest();
-      //  }
-      //  var form = await request.ReadFormAsync();
-      //  var formFile = form.Files["file"];
-      //  if (formFile is null || formFile.Length == 0)
-      //    return Results.BadRequest();
-      //  var tokenJwt = request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-      //  var result = await userService.UploadAvatar(formFile, tokenJwt);
-
-      //  return Results.Ok(result);
-      //  }
-      //  catch(Exception ex)
-      //  {
-      //    return customException.Error(ex.Message);
-      //  }
-      //})
-      //.RequireAuthorization()
-      //.WithDisplayName("Users")
-      //.WithTags("Users")
-      //.Produces(StatusCodes.Status401Unauthorized)
-      //.Produces(StatusCodes.Status400BadRequest)
-      //.Produces<UserDtoOut>(StatusCodes.Status201Created);
+      app.MapPost($"{BaseURL}/upload", async (ICustomException customException, IUserService userService, HttpRequest request) =>
+      {
+        try
+        {
+          if (!request.HasFormContentType)
+          {
+            return Results.BadRequest();
+          }
+          var form = await request.ReadFormAsync();
+          var formFile = form.Files["file"];
+          if (formFile is null || formFile.Length == 0)
+            return Results.BadRequest();
+          var tokenJwt = request.JwtExtractor();
+          //var result = await userService.UploadAvatar(formFile, tokenJwt);
+          //return Results.Ok(result);
+          return Results.Ok();
+        }
+        catch (Exception ex)
+        {
+          return customException.Error(ex.Message);
+        }
+      })
+      .RequireAuthorization()
+      .WithTags("Users")
+      .Produces(StatusCodes.Status401Unauthorized)
+      .Produces(StatusCodes.Status400BadRequest)
+      .Produces<UserDtoOut>(StatusCodes.Status201Created);
 
     }
 

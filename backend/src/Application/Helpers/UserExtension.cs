@@ -14,6 +14,7 @@ namespace Application.Helpers
       userNew.Name = user.Name;
       userNew.Bio = user.Bio;
       userNew.Email = user.Email;
+      userNew.ProfileImage = user.ProfileImage;
 
       return userNew;
     }

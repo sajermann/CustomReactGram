@@ -1,49 +1,34 @@
 ﻿using Application.Helpers;
-using System.ComponentModel.DataAnnotations;
 
 namespace Application.Dtos
 {
   public class UserDtoIn
   {
-    [Required(ErrorMessage = "O campo {0} é obrigatório.")]
-    [MaxLength(20, ErrorMessage = "O tamanho máximo do campo {0} é {1}.")]
     public string Name { get; set; }
-
-    [Required(ErrorMessage = "O campo {0} é obrigatório.")]
-    [MaxLength(50, ErrorMessage = "O tamanho máximo do campo {0} é {1}.")]
-    public string Password { get; set; }
-
-    [Required(ErrorMessage = "O campo {0} é obrigatório.")]
-    [MaxLength(100, ErrorMessage = "O tamanho máximo do campo {0} é {1}.")]
-    public string Email { get; set; }
-
-    [Required(ErrorMessage = "O campo {0} é obrigatório.")]
-    [MaxLength(250, ErrorMessage = "O tamanho máximo do campo {0} é {1}.")]
-    public string Avatar { get; set; }
+    public string ProfileImage { get; set; }
+    public string Bio { get; set; }
 
     public void IsValid()
     {
-      int prop1 = 0;
-      int prop2 = 0;
-      int prop3 = 0;
-      int prop4 = 0;
-      IDictionary<string, object> errors = new Dictionary<string, object>();
+      var errorsNew = new Dictionary<string, string[]>();
 
-      if (Name != null && Name.Length > 20) errors.Add($"Password__{prop1++}", "Tamanho máximo de 20 caracteres.");
-      if (Name == null) errors.Add($"Name__{prop1++}", "É obrigatório.");
+      List<string> errorsName = new List<string>();
+      if (Name != null && Name.Length < 3) errorsName.Add("Tamanho minímo de 3 caracteres.");
+      if (Name != null && Name.Length > 20) errorsName.Add("Tamanho máximo de 20 caracteres.");
+      if (Name == null) errorsName.Add("É obrigatório.");
+      if (errorsName.Count > 0) errorsNew.Add("Name", errorsName.ToArray());
 
-      if (Password != null && Password.Length > 50) errors.Add($"Password__{prop2++}", "Tamanho máximo de 50 caracteres.");
-      if (Password == null) errors.Add($"Password__{prop2++}", "É obrigatório.");
+      List<string> errorsProfileImage = new List<string>();
+      if (ProfileImage == null) errorsProfileImage.Add("É obrigatório.");
+      if (errorsProfileImage.Count > 0) errorsNew.Add("Email", errorsProfileImage.ToArray());
 
-      if (Email != null && Email.Length > 100) errors.Add($"Password__{prop3++}", "Tamanho máximo de 100 caracteres.");
-      if (Email == null) errors.Add($"Email__{prop3++}", "É obrigatório.");     
-      
-      if (Avatar != null && Avatar.Length > 250) errors.Add($"Password__{prop4++}", "Tamanho máximo de 250 caracteres.");
-      if (Avatar == null) errors.Add($"Avatar__{prop4++}", "É obrigatório.");
+      //List<string> errorsPassword = new List<string>();
+      //if (Password != null && Password.Length > 50) errorsPassword.Add("Tamanho máximo de 50 caracteres.");
+      //if (Password == null) errorsPassword.Add("É obrigatório.");
+      //if (errorsPassword.Count > 0) errorsNew.Add("Password", errorsPassword.ToArray());
 
 
-      //if (errors.Count > 0) throw new ModelValidationException(400, errors);
-    }
-
+      if (errorsNew.Count > 0) throw new ModelValidationException(400, errorsNew);
+    }   
   }
 }

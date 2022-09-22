@@ -9,6 +9,7 @@ namespace Application.Interfaces
     Task<UserDtoOut> GetById(string id);
     Task<UserDtoOut> GetByEmail(string email);
     Task<UserDtoOut> GetProfile(string jwt);
+    Task<UserDtoOut> UpdateProfile(UserDtoIn user, string jwt);
     //Task<List<UserDtoOut>> GetAll();
     //Task<UserDtoOut> Create(UserDtoIn model);
     //Task<UserDtoOut> Update(UserDtoIn model, Guid id);

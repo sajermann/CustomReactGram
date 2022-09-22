@@ -11,7 +11,7 @@ namespace Data
     Task<IEnumerable<User>> GetAll();
     Task<User> GetById(string id);
     Task<User> GetByEmail(string email);
-    Task<bool> Update(string id, User user);
+    Task<bool> Update(User user);
     Task<bool> Delete(string id);
     Task Create(User user);
   }
@@ -65,21 +65,18 @@ namespace Data
       }
     }
 
-    public async Task<bool> Update(string id, User user)
+    public async Task<bool> Update(User user)
     {
       try
       {
+        Expression<Func<User, bool>> filter = x => x.Id.Equals(user.Id);
 
-        IMongoCollection<User> users = _context.Users;
-
-        Expression<Func<User, bool>> filter = x => x.Id.Equals(id);
-
-        User cli = users.Find(filter).FirstOrDefault();
+        User cli = _context.Users.Find(filter).FirstOrDefault();
 
         if (cli != null)
         {
-          cli.Name = user.Name;
-          ReplaceOneResult result = users.ReplaceOne(filter, cli);
+          cli = user;
+          ReplaceOneResult result = _context.Users.ReplaceOne(filter, cli);
 
           return result.IsAcknowledged && result.ModifiedCount > 0;
         }

@@ -38,9 +38,9 @@ namespace Application
 
       var userInserted = await _userRepository.GetByEmail(userRegisterAndSignIn.Email);
       var userTemp = new UserRegisterDtoOut();
-      userTemp.Name = userInserted.Name; 
-      userTemp.Email = userInserted.Email; 
-      userTemp.Id = userInserted.Id; 
+      userTemp.Name = userInserted.Name;
+      userTemp.Email = userInserted.Email;
+      userTemp.Id = userInserted.Id;
       var result = await _token.Create(userTemp);
       return result;
     }
@@ -56,7 +56,7 @@ namespace Application
         errorsNew.Add("Email/Password", errorsEmails.ToArray());
         throw new ModelValidationException(400, errorsNew);
       }
-       
+
       var isValidPass = Password.VerifyPass(userLogin.Password, userExists.Password);
       if (!isValidPass)
       {
@@ -94,6 +94,29 @@ namespace Application
     {
       var user = await _userRepository.GetByEmail(email);
       return user.ToUserDtoOut();
+    }
+
+    public async Task<UserDtoOut> UpdateProfile(UserDtoIn userForUpdate, string jwt)
+    {
+      var userId = _token.GetClaim(jwt, "id");
+      var user = await _userRepository.GetById(userId);
+
+      user.ProfileImage = userForUpdate.ProfileImage;
+      user.Bio = userForUpdate.Bio;
+      user.Name = userForUpdate.Name;
+      user.UpdatedAt = DateTime.Now;
+
+      var result = await _userRepository.Update(user);
+      if (!result)
+      {
+        var errorsNew = new Dictionary<string, string[]>();
+        List<string> errors = new List<string>();
+        errors.Add("Ocorreu um erro ao salvar o usuário");
+        errorsNew.Add("UpdateUser", errors.ToArray());
+        throw new ModelValidationException(500, errorsNew);
+      }
+      return user.ToUserDtoOut();
+
     }
 
     //public async Task<List<UserDtoOut>> GetAll()
@@ -163,25 +186,25 @@ namespace Application
     //  ClearCache(userDeleted.Id.ToString(), userDeleted.Username);
     //}
 
-    //public async Task<UserDtoOut> UploadAvatar(IFormFile avatar, string jwt)
-    //{
-    //  var loggedUser = _token.ReadToken(jwt);
-    //  var loggedUserId = Convert.ToString(loggedUser.Claims.Where(b => b.Type == "id").FirstOrDefault().Value);
+    public async Task<UserDtoOut> UploadAvatar(IFormFile avatar, string jwt)
+    {
+      var loggedUser = _token.ReadToken(jwt);
+      var loggedUserId = Convert.ToString(loggedUser.Claims.Where(b => b.Type == "id").FirstOrDefault().Value);
 
-    //  var user = (await _genericRepository.Find(b => b.Id == Guid.Parse(loggedUserId))).FirstOrDefault();
-    //  if (user == null) throw new Exception("User not found!");
+      var user = (await _genericRepository.Find(b => b.Id == Guid.Parse(loggedUserId))).FirstOrDefault();
+      if (user == null) throw new Exception("User not found!");
 
-    //  var completeNameFile = loggedUserId + Path.GetExtension(avatar.FileName);
-    //  var currentDirectory = Environment.CurrentDirectory;
-    //  var fullPath = Path.Combine(currentDirectory, "..", "GoBarber.Data", "Database", "ImgAvatars", completeNameFile);
+      var completeNameFile = loggedUserId + Path.GetExtension(avatar.FileName);
+      var currentDirectory = Environment.CurrentDirectory;
+      var fullPath = Path.Combine(currentDirectory, "..", "GoBarber.Data", "Database", "ImgAvatars", completeNameFile);
 
-    //  using (var fileStream = new FileStream(fullPath, FileMode.Create))
-    //  {
-    //    await avatar.CopyToAsync(fileStream);
-    //  }
-    //  user.Avatar = completeNameFile;
-    //  var result = await _genericRepository.AddOrUpdate(user);
-    //  return _mapper.Map<UserDtoOut>(result);
-    //}
+      using (var fileStream = new FileStream(fullPath, FileMode.Create))
+      {
+        await avatar.CopyToAsync(fileStream);
+      }
+      user.Avatar = completeNameFile;
+      var result = await _genericRepository.AddOrUpdate(user);
+      return _mapper.Map<UserDtoOut>(result);
+    }
   }
 }
