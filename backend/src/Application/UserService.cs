@@ -19,7 +19,7 @@ namespace Application
       _userRepository = userRepository;
     }
 
-    public async Task RegisterAndSignIn(UserRegisterDtoIn userRegisterAndSignIn)
+    public async Task<UserRegisterDtoOut> RegisterAndSignIn(UserRegisterDtoIn userRegisterAndSignIn)
     {
       var userExists = await _userRepository.GetByEmail(userRegisterAndSignIn.Email);
       if (userExists != null)
@@ -41,12 +41,52 @@ namespace Application
       userTemp.Name = userInserted.Name; 
       userTemp.Email = userInserted.Email; 
       userTemp.Id = userInserted.Id; 
-      var result = await _token.GenerateToken(userTemp);
+      var result = await _token.Create(userTemp);
+      return result;
+    }
+
+    public async Task<UserRegisterDtoOut> Login(UserLogin userLogin)
+    {
+      var userExists = await _userRepository.GetByEmail(userLogin.Email);
+      if (userExists == null)
+      {
+        var errorsNew = new Dictionary<string, string[]>();
+        List<string> errorsEmails = new List<string>();
+        errorsEmails.Add("Email or password invalid!");
+        errorsNew.Add("Email/Password", errorsEmails.ToArray());
+        throw new ModelValidationException(400, errorsNew);
+      }
+       
+      var isValidPass = Password.VerifyPass(userLogin.Password, userExists.Password);
+      if (!isValidPass)
+      {
+        var errorsNew = new Dictionary<string, string[]>();
+        List<string> errorsEmails = new List<string>();
+        errorsEmails.Add("Email or password invalid!");
+        errorsNew.Add("Email/Password", errorsEmails.ToArray());
+        throw new ModelValidationException(400, errorsNew);
+      }
+
+      var userTemp = new UserRegisterDtoOut();
+      userTemp.Name = userExists.Name;
+      userTemp.Email = userExists.Email;
+      userTemp.Id = userExists.Id;
+      userTemp.ProfileImage = userExists.ProfileImage;
+      userTemp.Bio = userExists.Bio;
+      var result = await _token.Create(userTemp);
+      return result;
     }
 
     public async Task<UserDtoOut> GetById(string id)
     {
       var user = await _userRepository.GetById(id);
+      return user.ToUserDtoOut();
+    }
+
+    public async Task<UserDtoOut> GetProfile(string jwt)
+    {
+      var userId = _token.GetClaim(jwt, "id");
+      var user = await _userRepository.GetById(userId);
       return user.ToUserDtoOut();
     }
 

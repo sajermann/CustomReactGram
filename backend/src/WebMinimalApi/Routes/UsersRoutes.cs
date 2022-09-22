@@ -2,6 +2,7 @@
 using Application.Dtos;
 using Application.Helpers;
 using Application.Interfaces;
+using WebMinimalApi.Helpers;
 
 namespace Api.Routes
 {
@@ -33,14 +34,37 @@ namespace Api.Routes
         try
         {
           userRegister.IsValid();
-          await userService.RegisterAndSignIn(userRegister);
-          return Results.Ok("Bala");
+          var result = await userService.RegisterAndSignIn(userRegister);
+          return Results.Ok(result);
         }
         catch (ModelValidationException ex)
         {
           return Results.ValidationProblem(ex.Errors, null, null, ex.StatusCode);
         }
-      }).WithDisplayName("Usuários").WithTags("Users");
+      }).WithTags("Users");
+
+      app.MapPost($"{BaseURL}/login", async (IUserService userService, UserLogin userLogin) =>
+      {
+        try
+        {
+          userLogin.IsValid();
+          var result = await userService.Login(userLogin);
+          return Results.Ok(result);
+        }
+        catch (ModelValidationException ex)
+        {
+          return Results.ValidationProblem(ex.Errors, null, null, ex.StatusCode);
+        }
+      }).WithTags("Users");
+
+      app.MapGet($"{BaseURL}/profile", async (IUserService userService, HttpRequest request) =>
+      {
+        var tokenJwt = request.JwtExtractor();
+        var result = await userService.GetProfile(tokenJwt);
+        return Results.Ok(result);
+      })
+        //.RequireAuthorization()
+        .WithTags("Users").Produces(StatusCodes.Status401Unauthorized);
 
       //app.MapPost($"{BaseURL}", (IUserService userService, UserDtoIn user) =>
       //{

@@ -5,11 +5,11 @@ namespace Application.Helpers.Interfaces
 {
   public interface IToken
   {
-    Task<UserRegisterDtoOut> GenerateToken(UserRegisterDtoOut userAuth);
+    Task<UserRegisterDtoOut> Create(UserRegisterDtoOut userAuth);
 
-    JwtSecurityToken ReadToken(string token);
+    JwtSecurityToken Read(string token);
 
-    //bool ValidateToken(Logged logged);
+    string GetClaim(string token, string claim);
 
   }
 }
