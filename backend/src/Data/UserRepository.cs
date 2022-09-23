@@ -45,9 +45,9 @@ namespace Data
                         .Find(doc => doc.Id == id)
                         .FirstOrDefaultAsync();
       }
-      catch (Exception ex)
+      catch
       {
-        throw ex;
+        return null;
       }
     }
     

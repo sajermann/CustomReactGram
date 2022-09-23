@@ -24,6 +24,15 @@ namespace Data
       }
     }
 
+    public IMongoCollection<Photo> Photos
+    {
+      get
+      {
+        return _database.GetCollection<Photo>("Photos");
+      }
+    }
+
+
     public void Dispose()
     {
       _client = null;

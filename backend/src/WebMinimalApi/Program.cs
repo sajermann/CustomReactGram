@@ -113,6 +113,7 @@ app.UseCors(
 
 
 app.AddUsersRoutes();
+app.AddPhotosRoutes();
 
 app.Run();
 

@@ -11,6 +11,7 @@ namespace Application.Extensions
     {
       services.AddMemoryCache();
       services.AddTransient<IUserService, UserService>();
+      services.AddTransient<IPhotoService, PhotoService>();
       services.AddTransient<IToken, Token>();
 
        //services.AddScoped<IToken, Token>();      

@@ -14,6 +14,7 @@ public static class IServiceCollectionExtension
 
 
     services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
+    services.AddScoped(typeof(IPhotoRepository), typeof(PhotoRepository));
     //services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
     //services.AddScoped(typeof(IPermissionUserRepository), typeof(PermissionUserRepository));
     //services.AddScoped(typeof(IAccessRoutePermissionRepository), typeof(AccessRoutePermissionRepository));

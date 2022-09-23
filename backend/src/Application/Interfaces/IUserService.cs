@@ -1,4 +1,5 @@
 ﻿using Application.Dtos;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Interfaces
 {
@@ -10,10 +11,10 @@ namespace Application.Interfaces
     Task<UserDtoOut> GetByEmail(string email);
     Task<UserDtoOut> GetProfile(string jwt);
     Task<UserDtoOut> UpdateProfile(UserDtoIn user, string jwt);
+    Task<string> UploadAvatar(IFormFile avatar, string jwt);
     //Task<List<UserDtoOut>> GetAll();
     //Task<UserDtoOut> Create(UserDtoIn model);
     //Task<UserDtoOut> Update(UserDtoIn model, Guid id);
     //Task Delete(Guid id);
-    //Task<UserDtoOut> UploadAvatar(IFormFile avatar, string jwt);
   }
 }
