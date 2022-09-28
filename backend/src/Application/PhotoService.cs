@@ -38,5 +38,20 @@ namespace Application
       var photoDto = result.ToPhotoDtoOut();
       return photoDto;
     }
+
+    public async Task DeletePhoto(string id, string jwt)
+    {
+      var loggedUser = _token.GetClaim(jwt, "id");
+
+      var user = await _userRepository.GetById(loggedUser);
+      if (user == null) throw new Exception("User not found!");
+
+      var photo = await _photoRepository.GetById(id);
+      if(photo == null || photo.UserId != loggedUser) throw new Exception("Error Strange");
+
+      var result = await _photoRepository.Delete(id);
+
+      if(!result) throw new Exception("A Photo não pode ser excluída");
+    }
   }
 }
