@@ -29,5 +29,24 @@ namespace Application.Helpers
       photoNew.UserName = photo.UserName;
       return photoNew;
     }
+
+    public static IList<PhotoDtoOut> ToPhotosDtoOut(this IList<Photo> photos)
+    {
+      var photosNew = new List<PhotoDtoOut>();
+
+      for(int i = 0; i < photos.Count; i++)
+      {
+        var photoNew = new PhotoDtoOut();
+        photoNew.Image = photos[i].Image;
+        photoNew.Title = photos[i].Title;
+        photoNew.Likes = photos[i].Likes;
+        photoNew.Comments = photos[i].Comments;
+        photoNew.UserId = photos[i].UserId;
+        photoNew.UserName = photos[i].UserName;
+        photosNew.Add(photoNew);
+      }
+
+      return photosNew;
+    }
   }
 }

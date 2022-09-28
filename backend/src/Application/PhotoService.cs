@@ -21,6 +21,12 @@ namespace Application
       _photoRepository = photoRepository;
     }
 
+    public async Task<IList<PhotoDtoOut>> GetAll()
+    {
+      var result = await _photoRepository.GetAll();
+      return result.ToPhotosDtoOut();
+    }
+
     public async Task<PhotoDtoOut> CreatePhoto(PhotoDtoIn photoDtoIn, string jwt)
     {
       var loggedUser = _token.GetClaim(jwt, "id");
@@ -53,5 +59,7 @@ namespace Application
 
       if(!result) throw new Exception("A Photo não pode ser excluída");
     }
+
+
   }
 }
