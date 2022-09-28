@@ -21,6 +21,7 @@ namespace Application.Helpers
     public static PhotoDtoOut ToPhotoDtoOut(this Photo photo)
     {
       var photoNew = new PhotoDtoOut();
+      if (photo == null) return null;
       photoNew.Image = photo.Image;
       photoNew.Title = photo.Title;
       photoNew.Likes = photo.Likes;
@@ -33,7 +34,7 @@ namespace Application.Helpers
     public static IList<PhotoDtoOut> ToPhotosDtoOut(this IList<Photo> photos)
     {
       var photosNew = new List<PhotoDtoOut>();
-
+      
       for(int i = 0; i < photos.Count; i++)
       {
         var photoNew = new PhotoDtoOut();

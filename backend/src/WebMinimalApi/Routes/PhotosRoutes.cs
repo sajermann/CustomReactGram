@@ -29,6 +29,41 @@ namespace Api.Routes
       .Produces(StatusCodes.Status401Unauthorized)
       .Produces(StatusCodes.Status400BadRequest);
 
+      app.MapGet($"{BaseURL}/user/{{userId}}", async (ICustomException customException, [FromRoute]string userId, IPhotoService photoService) =>
+      {
+        try
+        {
+          var result = await photoService.GetAllByUserId(userId);
+          return Results.Ok(result);
+        }
+        catch (Exception ex)
+        {
+          return Results.BadRequest(ex.Message);
+        }
+      })
+      .RequireAuthorization()
+      .WithTags("Photos")
+      .Produces(StatusCodes.Status401Unauthorized)
+      .Produces(StatusCodes.Status400BadRequest);
+
+      app.MapGet($"{BaseURL}/{{id}}", async (ICustomException customException, [FromRoute] string id, IPhotoService photoService) =>
+      {
+        try
+        {
+          var result = await photoService.GetById(id);
+          if(result == null) return Results.NotFound();
+          return Results.Ok(result);
+        }
+        catch (Exception ex)
+        {
+          return Results.BadRequest(ex.Message);
+        }
+      })
+.RequireAuthorization()
+.WithTags("Photos")
+.Produces(StatusCodes.Status401Unauthorized)
+.Produces(StatusCodes.Status400BadRequest);
+
       app.MapPost($"{BaseURL}/upload", async (ICustomException customException, IPhotoService photoService, HttpRequest request) =>
       {
         try

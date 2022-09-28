@@ -27,6 +27,18 @@ namespace Application
       return result.ToPhotosDtoOut();
     }
 
+    public async Task<IList<PhotoDtoOut>> GetAllByUserId(string userId)
+    {
+      var result = await _photoRepository.GetAllByUserId(userId);
+      return result.ToPhotosDtoOut();
+    }
+
+    public async Task<PhotoDtoOut> GetById(string id)
+    {
+      var result = await _photoRepository.GetById(id);
+      return result.ToPhotoDtoOut();
+    }
+
     public async Task<PhotoDtoOut> CreatePhoto(PhotoDtoIn photoDtoIn, string jwt)
     {
       var loggedUser = _token.GetClaim(jwt, "id");

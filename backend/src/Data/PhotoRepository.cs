@@ -8,6 +8,7 @@ namespace Data
   public interface IPhotoRepository
   {
     Task<IList<Photo>> GetAll();
+    Task<IList<Photo>> GetAllByUserId(string userId);
     Task<Photo> GetById(string id);
     Task<Photo> Create(Photo photo);
     Task<bool> Delete(string id);
@@ -27,6 +28,18 @@ namespace Data
       try
       {
         return await _context.Photos.Find(_ => true).ToListAsync();
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+    }
+
+    public async Task<IList<Photo>> GetAllByUserId(string userId)
+    {
+      try
+      {
+        return await _context.Photos.Find(x => x.UserId == userId).ToListAsync();
       }
       catch (Exception ex)
       {
