@@ -1,6 +1,7 @@
 ﻿using Domain;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System.Linq.Expressions;
 
 namespace Data
 {
@@ -10,10 +11,12 @@ namespace Data
     Task<IList<Photo>> GetAll();
     Task<IList<Photo>> GetAllByUserId(string userId);
     Task<Photo> GetById(string id);
+    Task<IList<Photo>> GetByFilter(Expression<Func<Photo, bool>> filter);
     Task<Photo> Create(Photo photo);
+    Task<Photo> Update(Photo photo);
     Task<bool> Delete(string id);
   }
-
+  
   public class PhotoRepository : IPhotoRepository
   {
 
@@ -67,6 +70,32 @@ namespace Data
       return photo;
     }
 
+    public async Task<Photo> Update(Photo photo)
+    {
+      try
+      {
+        Expression<Func<Photo, bool>> filter = x => x.Id.Equals(photo.Id);
+
+        Photo cli = await _context.Photos.Find(filter).FirstOrDefaultAsync();
+
+        if (cli != null)
+        {
+          cli = photo;
+          ReplaceOneResult result = await _context.Photos.ReplaceOneAsync(filter, cli);
+          if(result.IsAcknowledged && result.ModifiedCount > 0)
+          {
+            return photo;
+          }
+          return null;
+        }
+        else return null;
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+    }
+
     public async Task<bool> Delete(string id)
     {
       try
@@ -83,6 +112,9 @@ namespace Data
       }
     }
 
-
+    public async Task<IList<Photo>> GetByFilter(Expression<Func<Photo, bool>> filter)
+    {
+      return await _context.Photos.Find(filter).ToListAsync();
+    }
   }
 }

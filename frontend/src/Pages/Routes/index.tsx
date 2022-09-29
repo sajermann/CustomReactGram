@@ -1,19 +1,19 @@
 import { Route, Switch } from 'react-router-dom';
-import PageA from '../PageA';
-import PageB from '../PageB';
-import PageC from '../PageC';
+import Home from '../Home';
+import Login from '../Login';
+import Register from '../Register';
 
 export default function Routes() {
 	return (
 		<Switch>
-			<Route path="/A" exact>
-				<PageA />
+			<Route path="/" exact>
+				<Home />
 			</Route>
-			<Route path="/B" exact>
-				<PageB />
+			<Route path="/login" exact>
+				<Login />
 			</Route>
-			<Route path="/C" exact>
-				<PageC />
+			<Route path="/register" exact>
+				<Register />
 			</Route>
 		</Switch>
 	);

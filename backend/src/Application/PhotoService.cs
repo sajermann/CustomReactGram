@@ -4,6 +4,8 @@ using Application.Helpers.Interfaces;
 using Application.Interfaces;
 using Data;
 using Domain;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace Application
 {
@@ -72,6 +74,96 @@ namespace Application
       if(!result) throw new Exception("A Photo não pode ser excluída");
     }
 
+    public async Task<PhotoDtoOut> Update(PhotoUpdateDtoIn photoUpdateDtoIn, string id, string jwt)
+    {
+      var loggedUser = _token.GetClaim(jwt, "id");
 
+      var user = await _userRepository.GetById(loggedUser);
+      if (user == null) throw new Exception("User not found!");
+
+      var photo = await _photoRepository.GetById(id);
+      if (photo == null || photo.UserId != loggedUser) throw new Exception("Photo não encontrada");
+
+      photo.Title = photoUpdateDtoIn.Title;
+      photo.UpdatedAt = DateTime.Now;
+
+      var result = await _photoRepository.Update(photo);
+      return result.ToPhotoDtoOut();
+
+    }
+
+    public async Task<PhotoDtoOut> Like(string id, string jwt)
+    {
+      var loggedUser = _token.GetClaim(jwt, "id");
+
+      var user = await _userRepository.GetById(loggedUser);
+      if (user == null) throw new Exception("User not found!");
+
+      var photo = await _photoRepository.GetById(id);
+      if(photo.Likes == null)
+      {
+        var likes = new List<string>();
+        likes.Add(user.Id);
+        photo.Likes = likes;
+      }
+      else
+      {
+        var likeExist = photo.Likes.Where(b => b == user.Id).FirstOrDefault();
+
+        if (likeExist == null)
+        {
+          photo.Likes.Add(user.Id);
+        }
+        else
+        {
+          photo.Likes.Remove(user.Id);
+        }
+      }
+      photo.UpdatedAt = DateTime.Now;
+      var photoSaved = await _photoRepository.Update(photo);
+
+      return photoSaved.ToPhotoDtoOut();
+    }
+
+    public async Task<PhotoDtoOut> Comment(PhotoCommentDtoIn photoCommentDtoIn, string id, string jwt)
+    {
+      var loggedUser = _token.GetClaim(jwt, "id");
+
+      var user = await _userRepository.GetById(loggedUser);
+      if (user == null) throw new Exception("User not found!");
+
+      var photo = await _photoRepository.GetById(id);
+      if (photo == null) throw new Exception("Photo não encontrada");
+
+      var comment = new
+      {
+        comment = photoCommentDtoIn.Comment,
+        userName = user.Name,
+        userImage = user.ProfileImage,
+        userId = user.Id,
+      };
+
+      if (photo.Comments == null)
+      {
+        var comments = new List<dynamic>();
+        comments.Add(comment);
+        photo.Comments = comments;
+      }
+      else
+      {
+        photo.Comments.Add(comment);
+      }
+
+      var result = await _photoRepository.Update(photo);
+      return result.ToPhotoDtoOut();
+
+    }
+
+    public async Task<IList<PhotoDtoOut>> GetByTitle(string title)
+    {
+      Expression<Func<Photo, bool>> filter = x => x.Title.ToLower().Contains(title.ToLower());
+      var result = await _photoRepository.GetByFilter(filter);
+      return result.ToPhotosDtoOut();
+    }
   }
 }

@@ -22,6 +22,8 @@ namespace Application.Helpers
     {
       var photoNew = new PhotoDtoOut();
       if (photo == null) return null;
+
+      photoNew.Id = photo.Id;
       photoNew.Image = photo.Image;
       photoNew.Title = photo.Title;
       photoNew.Likes = photo.Likes;

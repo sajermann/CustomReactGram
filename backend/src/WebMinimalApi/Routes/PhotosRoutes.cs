@@ -1,4 +1,5 @@
 ﻿using Api.Helpers.Interfaces;
+using Application.Dtos;
 using Application.Helpers;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace Api.Routes
       .Produces(StatusCodes.Status401Unauthorized)
       .Produces(StatusCodes.Status400BadRequest);
 
-      app.MapGet($"{BaseURL}/user/{{userId}}", async (ICustomException customException, [FromRoute]string userId, IPhotoService photoService) =>
+      app.MapGet($"{BaseURL}/user/{{userId}}", async (ICustomException customException, [FromRoute] string userId, IPhotoService photoService) =>
       {
         try
         {
@@ -51,7 +52,7 @@ namespace Api.Routes
         try
         {
           var result = await photoService.GetById(id);
-          if(result == null) return Results.NotFound();
+          if (result == null) return Results.NotFound();
           return Results.Ok(result);
         }
         catch (Exception ex)
@@ -59,10 +60,10 @@ namespace Api.Routes
           return Results.BadRequest(ex.Message);
         }
       })
-.RequireAuthorization()
-.WithTags("Photos")
-.Produces(StatusCodes.Status401Unauthorized)
-.Produces(StatusCodes.Status400BadRequest);
+      .RequireAuthorization()
+      .WithTags("Photos")
+      .Produces(StatusCodes.Status401Unauthorized)
+      .Produces(StatusCodes.Status400BadRequest);
 
       app.MapPost($"{BaseURL}/upload", async (ICustomException customException, IPhotoService photoService, HttpRequest request) =>
       {
@@ -87,13 +88,99 @@ namespace Api.Routes
       .Produces(StatusCodes.Status401Unauthorized)
       .Produces(StatusCodes.Status400BadRequest);
 
-      app.MapDelete($"{BaseURL}/{{id}}", async (ICustomException customException, [FromRoute]string id, IPhotoService photoService, HttpRequest request) =>
+      app.MapPut($"{BaseURL}/{{id}}", async (ICustomException customException, IPhotoService photoService, [FromRoute] string id, [FromBody] PhotoUpdateDtoIn photoUpdateDtoIn, HttpRequest request) =>
+      {
+        try
+        {
+          var tokenJwt = request.JwtExtractor();
+          photoUpdateDtoIn.IsValid();
+          var result = await photoService.Update(photoUpdateDtoIn, id, tokenJwt);
+          return Results.Ok(result);
+        }
+        catch (ModelValidationException ex)
+        {
+          return Results.ValidationProblem(ex.Errors, null, null, ex.StatusCode);
+        }
+        catch (Exception ex)
+        {
+          return Results.BadRequest(ex.Message);
+        }
+      })
+     .RequireAuthorization()
+     .WithTags("Photos")
+     .Produces(StatusCodes.Status401Unauthorized)
+     .Produces(StatusCodes.Status400BadRequest);
+
+      app.MapPut($"{BaseURL}/like/{{id}}", async (ICustomException customException, IPhotoService photoService, [FromRoute] string id, HttpRequest request) =>
+      {
+        try
+        {
+          var tokenJwt = request.JwtExtractor();
+          var result = await photoService.Like(id, tokenJwt);
+          return Results.Ok(result);
+        }
+        catch (ModelValidationException ex)
+        {
+          return Results.ValidationProblem(ex.Errors, null, null, ex.StatusCode);
+        }
+        catch (Exception ex)
+        {
+          return Results.BadRequest(ex.Message);
+        }
+      })
+      .RequireAuthorization()
+      .WithTags("Photos")
+      .Produces(StatusCodes.Status401Unauthorized)
+      .Produces(StatusCodes.Status400BadRequest);
+
+      app.MapPut($"{BaseURL}/comment/{{id}}", async (ICustomException customException, IPhotoService photoService, [FromRoute] string id, [FromBody] PhotoCommentDtoIn photoCommentDtoIn, HttpRequest request) =>
+      {
+        try
+        {
+          var tokenJwt = request.JwtExtractor();
+          photoCommentDtoIn.IsValid();
+          var result = await photoService.Comment(photoCommentDtoIn, id, tokenJwt);
+          return Results.Ok(result);
+        }
+        catch (ModelValidationException ex)
+        {
+          return Results.ValidationProblem(ex.Errors, null, null, ex.StatusCode);
+        }
+        catch (Exception ex)
+        {
+          return Results.BadRequest(ex.Message);
+        }
+      })
+     .RequireAuthorization()
+     .WithTags("Photos")
+     .Produces(StatusCodes.Status401Unauthorized)
+     .Produces(StatusCodes.Status400BadRequest);
+
+      app.MapDelete($"{BaseURL}/{{id}}", async (ICustomException customException, [FromRoute] string id, IPhotoService photoService, HttpRequest request) =>
       {
         try
         {
           var tokenJwt = request.JwtExtractor();
           await photoService.DeletePhoto(id, tokenJwt);
           return Results.NoContent();
+        }
+        catch (Exception ex)
+        {
+          return Results.BadRequest(ex.Message);
+        }
+      })
+      .RequireAuthorization()
+      .WithTags("Photos")
+      .Produces(StatusCodes.Status401Unauthorized)
+      .Produces(StatusCodes.Status400BadRequest);
+
+      app.MapGet($"{BaseURL}/search", async (ICustomException customException, [FromQuery] string title, IPhotoService photoService) =>
+      {
+        try
+        {
+          var result = await photoService.GetByTitle(title);
+          if (result == null) return Results.NotFound();
+          return Results.Ok(result);
         }
         catch (Exception ex)
         {
