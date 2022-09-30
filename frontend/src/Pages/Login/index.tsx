@@ -1,3 +1,10 @@
+import './index.css';
+
 export default function Login() {
-	return <h1>Login Page</h1>;
+	return (
+		<div id="login">
+			{' '}
+			<h1>Login Page</h1>
+		</div>
+	);
 }
