@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
+import { register, reset } from '../../Slices/authSlice';
 
 import './index.css';
 
@@ -15,6 +17,11 @@ export default function Register() {
 	// 	replace('/A');
 	// }, []);
 
+	const dispatch = useDispatch();
+
+	const { loading, error } = useSelector(state => state.auth);
+	console.log({ loading, error });
+
 	function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 
@@ -26,7 +33,13 @@ export default function Register() {
 		};
 
 		console.log({ user });
+
+		dispatch(register(user));
 	}
+
+	useEffect(() => {
+		dispatch(reset());
+	}, [dispatch]);
 
 	return (
 		<div id="register">
@@ -58,7 +71,7 @@ export default function Register() {
 					onChange={e => setConfirmPassword(e.target.value)}
 					value={confirmPassword}
 				/>
-				<input type="submit" value="Cadastrar" />
+				<input disabled={loading} type="submit" value="Cadastrar" />
 			</form>
 
 			<p>

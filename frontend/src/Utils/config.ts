@@ -1,9 +1,9 @@
-export const api = 'http://localhost:5000/api';
-export const uploads = 'http://localhost:5000/api/files';
+export const api = 'https://localhost:5000/api';
+export const uploads = 'https://localhost:5000/api/files';
 
 export const requestConfig = (
 	method: string,
-	data: object,
+	data: BodyInit | null | undefined,
 	token: any | null = null,
 	image: any | null = null
 ) => {
