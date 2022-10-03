@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
+import { Message } from '../../Components/Message';
 import { register, reset } from '../../Slices/authSlice';
 
 import './index.css';
 
 export default function Register() {
 	const [name, setName] = useState('');
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-	const [confirmPassword, setConfirmPassword] = useState('');
+	const [email, setEmail] = useState('sajermannbruno@gmail.com');
+	const [password, setPassword] = useState('12');
+	const [confirmPassword, setConfirmPassword] = useState('123');
 	const { replace } = useHistory();
 
 	// useEffect(() => {
@@ -19,7 +20,7 @@ export default function Register() {
 
 	const dispatch = useDispatch();
 
-	const { loading, error } = useSelector(state => state.auth);
+	const { loading, error } = useSelector((state: any) => state.auth);
 	console.log({ loading, error });
 
 	function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -33,7 +34,7 @@ export default function Register() {
 		};
 
 		console.log({ user });
-
+		// @ts-expect-error Esperado
 		dispatch(register(user));
 	}
 
@@ -51,7 +52,6 @@ export default function Register() {
 					placeholder="Nome"
 					onChange={e => setName(e.target.value)}
 					value={name}
-					required
 				/>
 				<input
 					type="email"
@@ -71,7 +71,12 @@ export default function Register() {
 					onChange={e => setConfirmPassword(e.target.value)}
 					value={confirmPassword}
 				/>
-				<input disabled={loading} type="submit" value="Cadastrar" />
+				<input
+					disabled={loading}
+					type="submit"
+					value={loading ? 'Aguarde...' : 'Cadastrar'}
+				/>
+				{error && <Message type="error" msg={error} />}
 			</form>
 
 			<p>

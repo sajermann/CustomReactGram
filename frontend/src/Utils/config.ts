@@ -1,6 +1,8 @@
 export const api = 'https://localhost:5000/api';
 export const uploads = 'https://localhost:5000/api/files';
 
+const headers: Record<string, string> = {};
+
 export const requestConfig = (
 	method: string,
 	data: BodyInit | null | undefined,
@@ -13,12 +15,12 @@ export const requestConfig = (
 		config = {
 			method,
 			body: data,
-			headers: {},
+			headers,
 		};
 	} else if (method === 'DELETE' || data === null) {
 		config = {
 			method,
-			headers: {},
+			headers,
 		};
 	} else {
 		config = {

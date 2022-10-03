@@ -8,13 +8,16 @@ async function register(data: any) {
 		const resp = await fetch(`${api}/users/register`, config)
 			.then(res => res.json())
 			.catch(err => err);
-		console.log({ resp });
-
-		if (resp) {
-			localStorage.setItem('user', JSON.stringify(resp));
+		if (resp.status !== 400) {
+			if (resp) {
+				localStorage.setItem('user', JSON.stringify(resp));
+			}
 		}
+
+		return resp;
 	} catch (error) {
 		console.log({ error });
+		return error;
 	}
 }
 

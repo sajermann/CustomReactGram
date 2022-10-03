@@ -1,22 +1,42 @@
+/* eslint-disable no-param-reassign */
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import authService from '../Services/authService';
 
-const user = JSON.parse(localStorage.getItem('user') || null);
+function getUserLocalStorage() {
+	const userTemp = localStorage.getItem('user');
+	if (!userTemp) {
+		return null;
+	}
+	return JSON.parse(userTemp);
+}
 
-const initialState = {
+const user = getUserLocalStorage();
+
+type InitialState = {
+	user: object | null;
+	error: unknown | null;
+	success: boolean;
+	loading: boolean;
+};
+
+const initialState: InitialState = {
 	user: user || null,
-	error: false,
+	error: null,
 	success: false,
 	loading: false,
 };
 
 export const register = createAsyncThunk(
 	'auth/register',
-	async (user, thunkAPI) => {
-		const data = await authService.register(user);
-
+	async (userForRegister, thunkAPI) => {
+		const data = await authService.register(userForRegister);
+		console.log(data.errors[0]);
 		if (data.errors) {
-			return thunkAPI.rejectWithValue(data.errors[0]);
+			return thunkAPI.rejectWithValue(
+				`${Object.keys(data.errors)[0]} - ${
+					data.errors[Object.keys(data.errors)[0]]
+				}`
+			);
 		}
 
 		return data;
@@ -29,7 +49,7 @@ export const authSlice = createSlice({
 	reducers: {
 		reset: state => {
 			state.loading = false;
-			state.error = false;
+			state.error = null;
 			state.success = false;
 		},
 	},
@@ -37,13 +57,13 @@ export const authSlice = createSlice({
 	extraReducers: builders => {
 		builders.addCase(register.pending, state => {
 			state.loading = true;
-			state.error = false;
+			state.error = null;
 		});
 
 		builders.addCase(register.fulfilled, (state, action) => {
 			state.loading = false;
 			state.success = true;
-			state.error = false;
+			state.error = null;
 			state.user = action.payload;
 		});
 
