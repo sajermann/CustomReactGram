@@ -1,13 +1,13 @@
 export const api = 'https://localhost:5000/api';
-export const uploads = 'https://localhost:5000/api/files';
+export const uploads = 'https://localhost:5000/files';
 
 const headers: Record<string, string> = {};
 
 export const requestConfig = (
 	method: string,
 	data: BodyInit | null | undefined,
-	token: any | null = null,
-	image: any | null = null
+	token: string | null = null,
+	image: boolean | null = null
 ) => {
 	let config;
 
@@ -31,7 +31,7 @@ export const requestConfig = (
 			},
 		};
 	}
-
+	console.log({ token });
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
 	}
