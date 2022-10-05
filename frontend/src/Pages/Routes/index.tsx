@@ -3,6 +3,7 @@ import { useAuth } from '../../Hooks/UseAuth';
 import EditProfile from '../EditProfile';
 import Home from '../Home';
 import Login from '../Login';
+import Profile from '../Profile';
 import Register from '../Register';
 
 export default function Routes() {
@@ -17,6 +18,9 @@ export default function Routes() {
 			</Route>
 			<Route path="/profile" exact>
 				{auth ? <EditProfile /> : <Redirect to="/login" />}
+			</Route>
+			<Route path="/users/:id" exact>
+				{auth ? <Profile /> : <Redirect to="/login" />}
 			</Route>
 			<Route path="/login" exact>
 				{!auth ? <Login /> : <Redirect to="/login" />}

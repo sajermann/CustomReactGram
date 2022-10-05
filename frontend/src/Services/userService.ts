@@ -41,10 +41,25 @@ async function updateProfileImage(data: any, token: string) {
 	}
 }
 
+async function getUserDetails(id: string, token: string) {
+	const config = requestConfig('GET', undefined, token);
+	try {
+		const resp = await fetch(`${api}/users/${id}`, config)
+			.then(res => res.json())
+			.catch(err => err);
+
+		return resp;
+	} catch (error) {
+		console.log({ error });
+		return error;
+	}
+}
+
 const userService = {
 	profile,
 	updateProfile,
 	updateProfileImage,
+	getUserDetails,
 };
 
 export default userService;

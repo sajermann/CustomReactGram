@@ -26,7 +26,6 @@ export default function EditProfile() {
 	const { user, message, error, loading } = useSelector(
 		(state: any) => state.user
 	);
-	console.log({ user });
 
 	useEffect(() => {
 		// @ts-expect-error Esperado

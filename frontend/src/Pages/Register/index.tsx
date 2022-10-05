@@ -33,7 +33,6 @@ export default function Register() {
 			confirmPassword,
 		};
 
-		console.log({ user });
 		// @ts-expect-error Esperado
 		dispatch(register(user));
 	}

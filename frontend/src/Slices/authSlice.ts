@@ -11,7 +11,6 @@ function getUserLocalStorage() {
 }
 
 const user = getUserLocalStorage();
-console.log({ user });
 
 type InitialState = {
 	user: object | null;

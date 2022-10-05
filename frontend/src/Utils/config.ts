@@ -31,7 +31,6 @@ export const requestConfig = (
 			},
 		};
 	}
-	console.log({ token });
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
 	}
