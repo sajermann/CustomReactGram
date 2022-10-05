@@ -40,6 +40,7 @@ namespace Application.Helpers
       for(int i = 0; i < photos.Count; i++)
       {
         var photoNew = new PhotoDtoOut();
+        photoNew.Id = photos[i].Id;
         photoNew.Image = photos[i].Image;
         photoNew.Title = photos[i].Title;
         photoNew.Likes = photos[i].Likes;
