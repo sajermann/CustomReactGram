@@ -52,11 +52,39 @@ async function updatePhoto(data: any, id: string, token: string) {
 	}
 }
 
+async function getPhotoById(id: string, token: string) {
+	const config = requestConfig('GET', null, token);
+	try {
+		const resp = await fetch(`${api}/photos/${id}`, config)
+			.then(res => res.json())
+			.catch(err => err);
+		return resp;
+	} catch (error) {
+		console.log({ error });
+		return error;
+	}
+}
+
+async function like(id: string, token: string) {
+	const config = requestConfig('PUT', null, token);
+	try {
+		const resp = await fetch(`${api}/photos/like/${id}`, config)
+			.then(res => res.json())
+			.catch(err => err);
+		return resp;
+	} catch (error) {
+		console.log({ error });
+		return error;
+	}
+}
+
 const photoService = {
 	publishPhoto,
 	getUserPhotos,
 	deletePhoto,
 	updatePhoto,
+	getPhotoById,
+	like,
 };
 
 export default photoService;

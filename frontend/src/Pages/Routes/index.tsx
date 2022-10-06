@@ -3,6 +3,7 @@ import { useAuth } from '../../Hooks/UseAuth';
 import EditProfile from '../EditProfile';
 import Home from '../Home';
 import Login from '../Login';
+import Photo from '../Photo';
 import Profile from '../Profile';
 import Register from '../Register';
 
@@ -27,6 +28,9 @@ export default function Routes() {
 			</Route>
 			<Route path="/register" exact>
 				{!auth ? <Register /> : <Redirect to="/login" />}
+			</Route>
+			<Route path="/photos/:id" exact>
+				{auth ? <Photo /> : <Redirect to="/login" />}
 			</Route>
 		</Switch>
 	);

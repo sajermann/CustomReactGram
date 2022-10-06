@@ -4,7 +4,7 @@ import photoService from '../Services/photoService';
 
 type InitialState = {
 	photos: object[];
-	photo: object;
+	photo: any;
 	error: unknown | null;
 	success: boolean;
 	loading: boolean;
@@ -77,6 +77,38 @@ export const updatePhoto = createAsyncThunk(
 			photoData.id,
 			jwt
 		);
+		if (data.errors) {
+			return thunkAPI.rejectWithValue(
+				`${Object.keys(data.errors)[0]} - ${
+					data.errors[Object.keys(data.errors)[0]]
+				}`
+			);
+		}
+		return data;
+	}
+);
+
+export const getPhotoById = createAsyncThunk(
+	'photo/getPhoto',
+	async (id: string, thunkAPI: any) => {
+		const { jwt } = thunkAPI.getState().auth.user;
+		const data = await photoService.getPhotoById(id, jwt);
+		if (data.errors) {
+			return thunkAPI.rejectWithValue(
+				`${Object.keys(data.errors)[0]} - ${
+					data.errors[Object.keys(data.errors)[0]]
+				}`
+			);
+		}
+		return data;
+	}
+);
+
+export const like = createAsyncThunk(
+	'photo/like',
+	async (id: string, thunkAPI: any) => {
+		const { jwt } = thunkAPI.getState().auth.user;
+		const data = await photoService.like(id, jwt);
 		if (data.errors) {
 			return thunkAPI.rejectWithValue(
 				`${Object.keys(data.errors)[0]} - ${
@@ -165,6 +197,37 @@ export const photoSlice = createSlice({
 				state.loading = false;
 				state.error = action.payload;
 				state.photo = {};
+			})
+			.addCase(getPhotoById.pending, state => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(getPhotoById.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = true;
+				state.error = null;
+				state.photo = action.payload;
+			})
+			.addCase(like.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = true;
+				state.error = null;
+				state.photo = action.payload;
+				// if (state.photo.likes) {
+				// 	state.photo.likes.push(action.payload.userId);
+				// }
+				state.photos = state.photos.map((item: any) => {
+					if (item.id === action.payload.id) {
+						return { ...item, likes: [...item.likes, action.payload.userId] };
+					}
+					return item;
+				});
+
+				state.message = 'Foto atualizada com sucesso';
+			})
+			.addCase(like.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
 			});
 	},
 });
