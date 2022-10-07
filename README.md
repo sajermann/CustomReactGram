@@ -27,11 +27,9 @@ Utilizei o Typescript do jeito mais simples possível, como por exemplo utilizar
 
 🖥️ Front-end: ReactJs (Vite e Typescript)
 
-### Para rodar a aplicação
+### Para executar a aplicação
 
-No backend, preencha a ConnectionString e Database dentro do appsettings.json com as informações do seu banco de dados MongoDB, abra o projeto com o Visual Studio e execute a aplicação.
-
-No frontend, execute `npm install` para baixar as dependências, e depois execute `npm start` para iniciar a aplicação.
+Vide Readme de cada projeto (Backend/Frontend)
 
 ### Demonstração
 
