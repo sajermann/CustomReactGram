@@ -47,7 +47,6 @@ export const login = createAsyncThunk(
 	'auth/login',
 	async (userForRegister, thunkAPI) => {
 		const data = await authService.login(userForRegister);
-		console.log(data.errors[0]);
 		if (data.errors) {
 			return thunkAPI.rejectWithValue(
 				`${Object.keys(data.errors)[0]} - ${

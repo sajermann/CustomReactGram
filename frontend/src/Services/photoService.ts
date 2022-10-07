@@ -52,6 +52,19 @@ async function updatePhoto(data: any, id: string, token: string) {
 	}
 }
 
+async function getPhotos(token: string) {
+	const config = requestConfig('GET', null, token);
+	try {
+		const resp = await fetch(`${api}/photos`, config)
+			.then(res => res.json())
+			.catch(err => err);
+		return resp;
+	} catch (error) {
+		console.log({ error });
+		return error;
+	}
+}
+
 async function getPhotoById(id: string, token: string) {
 	const config = requestConfig('GET', null, token);
 	try {
@@ -78,6 +91,32 @@ async function like(id: string, token: string) {
 	}
 }
 
+async function comment(data: any, id: string, token: string) {
+	const config = requestConfig('PUT', data, token);
+	try {
+		const resp = await fetch(`${api}/photos/comment/${id}`, config)
+			.then(res => res.json())
+			.catch(err => err);
+		return resp;
+	} catch (error) {
+		console.log({ error });
+		return error;
+	}
+}
+
+async function searchPhotoByTitle(title: string, token: string) {
+	const config = requestConfig('GET', null, token);
+	try {
+		const resp = await fetch(`${api}/photos/search?title=${title}`, config)
+			.then(res => res.json())
+			.catch(err => err);
+		return resp;
+	} catch (error) {
+		console.log({ error });
+		return error;
+	}
+}
+
 const photoService = {
 	publishPhoto,
 	getUserPhotos,
@@ -85,6 +124,9 @@ const photoService = {
 	updatePhoto,
 	getPhotoById,
 	like,
+	comment,
+	getPhotos,
+	searchPhotoByTitle,
 };
 
 export default photoService;

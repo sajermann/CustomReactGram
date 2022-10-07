@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
+import React, { useState } from 'react';
 import {
 	BsSearch,
 	BsHouseDoorFill,
@@ -16,7 +17,7 @@ import './index.css';
 export function Navbar() {
 	const { auth } = useAuth();
 	const { user } = useSelector((state: any) => state.auth);
-
+	const [query, setQuery] = useState('');
 	const history = useHistory();
 	const dispatch = useDispatch();
 
@@ -27,12 +28,23 @@ export function Navbar() {
 		history.push('/login');
 	}
 
+	function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+		e.preventDefault();
+		if (query.length > 0) {
+			history.push(`/search?query=${query}`);
+		}
+	}
+
 	return (
 		<nav id="nav">
 			<Link to="/">ReactGram</Link>
-			<form id="search-form">
+			<form id="search-form" onSubmit={handleSubmit}>
 				<BsSearch />
-				<input type="text" placeholder="Pesquisar" />
+				<input
+					type="text"
+					placeholder="Pesquisar"
+					onChange={e => setQuery(e.target.value)}
+				/>
 			</form>
 
 			<ul id="nav-links">

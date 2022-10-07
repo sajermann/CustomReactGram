@@ -104,6 +104,22 @@ export const getPhotoById = createAsyncThunk(
 	}
 );
 
+export const getPhotos = createAsyncThunk(
+	'photo/getPhotos',
+	async (_, thunkAPI: any) => {
+		const { jwt } = thunkAPI.getState().auth.user;
+		const data = await photoService.getPhotos(jwt);
+		if (data.errors) {
+			return thunkAPI.rejectWithValue(
+				`${Object.keys(data.errors)[0]} - ${
+					data.errors[Object.keys(data.errors)[0]]
+				}`
+			);
+		}
+		return data;
+	}
+);
+
 export const like = createAsyncThunk(
 	'photo/like',
 	async (id: string, thunkAPI: any) => {
@@ -117,6 +133,42 @@ export const like = createAsyncThunk(
 			);
 		}
 		return data;
+	}
+);
+
+export const comment = createAsyncThunk(
+	'photo/comment',
+	async (commentData: any, thunkAPI: any) => {
+		const { jwt } = thunkAPI.getState().auth.user;
+		const resp = await photoService.comment(
+			{ comment: commentData.comment },
+			commentData.id,
+			jwt
+		);
+		if (resp.errors) {
+			return thunkAPI.rejectWithValue(
+				`${Object.keys(resp.errors)[0]} - ${
+					resp.errors[Object.keys(resp.errors)[0]]
+				}`
+			);
+		}
+		return resp;
+	}
+);
+
+export const searchPhotoByTitle = createAsyncThunk(
+	'photo/search',
+	async (title: string, thunkAPI: any) => {
+		const { jwt } = thunkAPI.getState().auth.user;
+		const resp = await photoService.searchPhotoByTitle(title, jwt);
+		if (resp.errors) {
+			return thunkAPI.rejectWithValue(
+				`${Object.keys(resp.errors)[0]} - ${
+					resp.errors[Object.keys(resp.errors)[0]]
+				}`
+			);
+		}
+		return resp;
 	}
 );
 
@@ -153,6 +205,16 @@ export const photoSlice = createSlice({
 				state.error = null;
 			})
 			.addCase(getUserPhotos.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = true;
+				state.error = null;
+				state.photos = action.payload;
+			})
+			.addCase(getPhotos.pending, state => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(getPhotos.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = true;
 				state.error = null;
@@ -208,24 +270,54 @@ export const photoSlice = createSlice({
 				state.error = null;
 				state.photo = action.payload;
 			})
+			.addCase(searchPhotoByTitle.pending, state => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(searchPhotoByTitle.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = true;
+				state.error = null;
+				state.photos = action.payload;
+			})
 			.addCase(like.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = true;
 				state.error = null;
 				state.photo = action.payload;
-				// if (state.photo.likes) {
-				// 	state.photo.likes.push(action.payload.userId);
-				// }
 				state.photos = state.photos.map((item: any) => {
 					if (item.id === action.payload.id) {
-						return { ...item, likes: [...item.likes, action.payload.userId] };
+						const likesTemp = [...(item.likes || [])];
+						return { ...item, likes: [...likesTemp, action.payload.userId] };
 					}
 					return item;
 				});
 
-				state.message = 'Foto atualizada com sucesso';
+				state.message = 'O like foi atualizado';
 			})
 			.addCase(like.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(comment.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = true;
+				state.error = null;
+
+				state.photo = action.payload;
+				state.photos = state.photos.map((item: any) => {
+					if (item.id === action.payload.id) {
+						return {
+							...item,
+							comments: [...item.comments, action.payload.comments],
+						};
+					}
+					return item;
+				});
+
+				state.message = 'O comentário foi adicionado';
+			})
+			.addCase(comment.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			});

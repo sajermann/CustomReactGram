@@ -11,17 +11,10 @@ export default function Register() {
 	const [email, setEmail] = useState('sajermannbruno@gmail.com');
 	const [password, setPassword] = useState('12');
 	const [confirmPassword, setConfirmPassword] = useState('123');
-	const { replace } = useHistory();
-
-	// useEffect(() => {
-	// 	console.log('Page C, redirect for A');
-	// 	replace('/A');
-	// }, []);
 
 	const dispatch = useDispatch();
 
 	const { loading, error } = useSelector((state: any) => state.auth);
-	console.log({ loading, error });
 
 	function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();

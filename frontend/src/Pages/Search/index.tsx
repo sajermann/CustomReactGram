@@ -3,19 +3,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { LikeContainer } from '../../Components/LikeContainer';
 import { PhotoItem } from '../../Components/PhotoItem';
+import { useQuery } from '../../Hooks/UseQuery';
 import { useResetComponentMessage } from '../../Hooks/UseResetComponentMessage';
-import { getPhotos, like } from '../../Slices/photoSlice';
+import { searchPhotoByTitle, like } from '../../Slices/photoSlice';
 import './index.css';
 
-export default function Home() {
+export default function Search() {
+	const query = useQuery();
 	const dispatch = useDispatch();
 	const resetMessage = useResetComponentMessage(dispatch);
 	const { user } = useSelector((state: any) => state.auth);
 	const { photos, loading } = useSelector((state: any) => state.photo);
 	useEffect(() => {
 		// @ts-expect-error esperado
-		dispatch(getPhotos());
-	}, [dispatch]);
+		dispatch(searchPhotoByTitle(query.get('query')));
+	}, [dispatch, query]);
 
 	function handleLike(idPhoto: string) {
 		// @ts-expect-error esperado
@@ -23,12 +25,9 @@ export default function Home() {
 		resetMessage();
 	}
 
-	if (loading) {
-		return <p>Carregando...</p>;
-	}
-
 	return (
-		<div id="home">
+		<div id="search">
+			<h2>Você está buscando por: {query.get('query')}</h2>
 			{photos &&
 				photos.map((photo: any) => (
 					<div key={photo.id}>
@@ -45,8 +44,7 @@ export default function Home() {
 				))}
 			{photos && photos.length === 0 && (
 				<h2 className="no-photos">
-					Ainda não há fotos publicadas,{' '}
-					<Link to={`/users/${user.id}`}>Clique aqui</Link>
+					Não foram encontrados resultados para sua busca
 				</h2>
 			)}
 		</div>

@@ -8,7 +8,6 @@ type Props = {
 };
 
 export function LikeContainer({ photo, user, handleLike }: Props) {
-	console.log({ photo });
 	return (
 		<div className="like">
 			{photo && user && (

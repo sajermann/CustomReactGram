@@ -20,7 +20,6 @@ export default function Login() {
 
 		// @ts-expect-error Esperado
 		dispatch(login(user));
-		console.log({ error });
 	}
 
 	useEffect(() => {

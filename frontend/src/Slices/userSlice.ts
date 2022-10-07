@@ -47,7 +47,6 @@ export const updateProfileImage = createAsyncThunk(
 	'user/updateProfileImage',
 	async (imageForUpdate: any, thunkAPI: any) => {
 		const { jwt } = thunkAPI.getState().auth.user;
-		console.log({ imageForUpdate });
 		const data = await userService.updateProfileImage(imageForUpdate, jwt);
 		if (data.errors) {
 			return thunkAPI.rejectWithValue(
