@@ -2,6 +2,8 @@
 
 Projeto criado no curso React do Zero a Maestria (c/ hooks, router, API, Projetos) do Matheus Battisti.
 
+O projeto consiste em criar uma versão similar ao Instagram, onde o usuário pode se cadastrar e postar fotos, existem a possibilidade do usuário curtir as fotos de outros usuários, realizar comentários e fazer pesquisas baseadas em títulos das postagens.
+
 O projeto do curso se Chama React Gram, porém eu renomeie para Custom React Gram pois decidi fazer várias modificações.
 
 Como o meu foco principal era aprender Redux, eu escolhi fazer as coisas um pouco diferente como no caso do backend na linguagem que eu conheço mais e incluir o typescript para evitar erros que poderiam atrasar.
