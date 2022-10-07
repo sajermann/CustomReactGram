@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { LikeContainer } from '../../Components/LikeContainer';
+import { Message } from '../../Components/Message';
 import { PhotoItem } from '../../Components/PhotoItem';
 import { useResetComponentMessage } from '../../Hooks/UseResetComponentMessage';
 import { getPhotos, like } from '../../Slices/photoSlice';
@@ -11,7 +12,10 @@ export default function Home() {
 	const dispatch = useDispatch();
 	const resetMessage = useResetComponentMessage(dispatch);
 	const { user } = useSelector((state: any) => state.auth);
-	const { photos, loading } = useSelector((state: any) => state.photo);
+	const { photos, loading, error, message } = useSelector(
+		(state: any) => state.photo
+	);
+
 	useEffect(() => {
 		// @ts-expect-error esperado
 		dispatch(getPhotos());
@@ -41,6 +45,10 @@ export default function Home() {
 						<Link className="btn" to={`/photos/${photo.id}`}>
 							Ver mais
 						</Link>
+						<div className="message-container">
+							{error && <Message msg={message} type="error" />}
+							{message && <Message msg={message} type="success" />}
+						</div>
 					</div>
 				))}
 			{photos && photos.length === 0 && (

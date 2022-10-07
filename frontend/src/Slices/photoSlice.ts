@@ -287,8 +287,11 @@ export const photoSlice = createSlice({
 				state.photo = action.payload;
 				state.photos = state.photos.map((item: any) => {
 					if (item.id === action.payload.id) {
-						const likesTemp = [...(item.likes || [])];
-						return { ...item, likes: [...likesTemp, action.payload.userId] };
+						let likesTemp: string[] = [];
+						if (item.likes && item.likes.length > 0) {
+							likesTemp = item.likes;
+						}
+						return { ...item, likes: likesTemp };
 					}
 					return item;
 				});
